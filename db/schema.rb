@@ -21,8 +21,8 @@ ActiveRecord::Schema.define(version: 2021_04_07_165333) do
     t.date "born_date"
     t.string "phone"
     t.string "address"
-    t.string "credit_card_number"
-    t.string "franchise"
+    t.string "card_number"
+    t.string "card_franchise"
     t.string "email"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
