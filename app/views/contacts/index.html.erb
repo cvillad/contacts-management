@@ -1,1 +1,36 @@
-<h1><%= number_to_phone(3005042973) %></h1>
+<%= link_to "Log out", destroy_user_session_path, method: :delete %>
+
+<p id="notice"><%= notice %></p>
+
+<h1>Contacts</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Address</th>
+      <th>Date of birth</th>
+      <th>Credit card</th>
+      <th>Franchise</th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @contacts.each do |contact| %>
+      <tr>
+        <td><%= contact.name %></td>
+        <td><%= contact.email %></td>
+        <td><%= contact.address %></td>
+        <td><%= contact.born_date %></td>
+        <td><%= contact.card_number %></td>
+        <td><%= contact.card_franchise %></td>
+        <td><%= link_to 'Destroy', contact, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+<%= link_to 'Export CSV', contacts_path(format: :csv), method: :get %>

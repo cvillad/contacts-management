@@ -1,7 +1,9 @@
 class Contact < ApplicationRecord
+  require 'csv'
   belongs_to :user
   before_save -> {self.card_franchise = credit_card_franchise}
-  validates :name, presence: true, format: {with: /\A[a-zA-Z -]*\z/, multiline: true}
+  before_create -> {self.card_franchise = credit_card_franchise}
+  validates :name, presence: true, format: {with: /\A[a-zA-Z0-9 -]*\z/, multiline: true}
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :address, presence: true
   validates :phone, presence: true, format: {with: /\A\(\+\d{2}\) (\d{3} \d{3} \d{2} \d{2}|\d{3}-\d{3}-\d{2}-\d{2})$\z/}
@@ -16,9 +18,40 @@ class Contact < ApplicationRecord
     end
   end
 
+  def self.load_csv(file)
+    items = []
+    CSV.foreach(file.path, headers: true) do |row|
+      items << row.to_h
+    end
+    items
+    #import(items, validate: true, validate_uniqueness: true)
+  end 
+
+  def self.to_csv
+    attributes = %w{name email phone born_date card_number card_franchise}
+    CSV.generate(headers: true) do |csv|
+      csv << attributes
+      all.each do |contact|
+        csv << attributes.map{ |attr| contact.send(attr) }
+      end
+    end
+  end
+
   def format_born_date
     self[:born_date].strftime("%Y %B %d") if self[:born_date]
   end
+
+  def credit_card_franchise
+    number = self[:card_number].to_s.gsub(/\D/, "") 
+    return "Dinner's club" if number.length == 14 && number =~ /^3(0[0-5]|[68])/   # 300xxx-305xxx, 36xxxx, 38xxxx
+    return "American Express"     if number.length == 15 && number =~ /^3[47]/            # 34xxxx, 37xxxx
+    return "Visa"    if [13,16].include?(number.length) && number =~ /^4/    # 4xxxxx
+    return "Mastercard"   if number.length == 16 && number =~ /^5[1-5]/           # 51xxxx-55xxxx
+    return "Discover" if number.length == 16 && number =~ /^6011/             # 6011xx
+    return nil
+  end
+
+  private 
 
   def validate_credit_card
     number = self[:card_number].to_s.gsub(/\D/, "")
@@ -30,16 +63,6 @@ class Contact < ApplicationRecord
       sum += (i % 2 == 0) ? n.to_i : relative_number[n]
     end
     errors.add(:card_number, :invalid) if sum % 10 != 0
-  end
-  
-  def credit_card_franchise
-    number = self[:card_number].to_s.gsub(/\D/, "") 
-    return "Dinner's club" if number.length == 14 && number =~ /^3(0[0-5]|[68])/   # 300xxx-305xxx, 36xxxx, 38xxxx
-    return "American Express"     if number.length == 15 && number =~ /^3[47]/            # 34xxxx, 37xxxx
-    return "Visa"    if [13,16].include?(number.length) && number =~ /^4/    # 4xxxxx
-    return "Mastercard"   if number.length == 16 && number =~ /^5[1-5]/           # 51xxxx-55xxxx
-    return "Discover" if number.length == 16 && number =~ /^6011/             # 6011xx
-    return nil
   end
 
 end
