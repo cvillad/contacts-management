@@ -1,14 +1,19 @@
 class Contact < ApplicationRecord
+  include BCrypt
+  before_save -> {
+    self.card_last_four_digits = @card_number[-4..-1]
+    self.card_franchise = credit_card_franchise(@card_number)
+    @card_number = Password.create(@card_number)
+    self.card_number_hash = @card_number
+  }
   belongs_to :user
-  before_save -> {self.card_franchise = credit_card_franchise}
-  before_create -> {self.card_franchise = credit_card_franchise}
   validates :name, presence: true, format: {with: /\A[a-zA-Z0-9 -]*\z/, multiline: true}
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :address, presence: true
   validates :phone, presence: true, format: {with: /\A\(\+\d{2}\) (\d{3} \d{3} \d{2} \d{2}|\d{3}-\d{3}-\d{2}-\d{2})$\z/}
   validates :birth_date, presence: true
   validates :card_number, presence: true
-  validate :validate_credit_card
+  validate :valid_card?
   validates_each :birth_date_before_type_cast do |record, attribute, value|
     begin
       value.include?("-") ? Date.strptime(value, "%F") : Date.strptime(value, "%Y%m%d")
@@ -17,9 +22,17 @@ class Contact < ApplicationRecord
     end
   end
 
+  def card_number
+    @card_number ||= Password.new(card_number_hash) if card_number_hash.present?
+  end
+
+  def card_number=(new_card_number)
+    @card_number = new_card_number
+    self.card_number_hash = new_card_number
+  end
+
   def self.from_csv(user, file, map_headers)
     file_path = ActiveStorage::Blob.service.send(:path_for, file.csv_file.key)
-    byebug
     CSV.foreach(file_path, headers: true) do |row|
       contact = user.contacts.build(
         email: row[map_headers[:email]],
@@ -47,10 +60,8 @@ class Contact < ApplicationRecord
     self[:birth_date].strftime("%Y %B %d") if self[:birth_date]
   end
 
-  private 
-
-  def credit_card_franchise
-    number = self[:card_number].to_s.gsub(/\D/, "") 
+  def credit_card_franchise(card_number)
+    number = card_number.to_s.gsub(/\D/, "") 
     return "Dinner's club" if number.length == 14 && number =~ /^3(0[0-5]|[68])/   # 300xxx-305xxx, 36xxxx, 38xxxx
     return "American Express"     if number.length == 15 && number =~ /^3[47]/            # 34xxxx, 37xxxx
     return "Visa"    if [13,16].include?(number.length) && number =~ /^4/    # 4xxxxx
@@ -59,9 +70,11 @@ class Contact < ApplicationRecord
     return nil
   end
 
-  def validate_credit_card
-    number = self[:card_number].to_s.gsub(/\D/, "")
-    errors.add(:card_number, :invalid) if credit_card_franchise.nil? 
+  private 
+
+  def valid_card?
+    number = self.card_number_hash.to_s.gsub(/\D/, "")
+    errors.add(:card_number, :invalid) if credit_card_franchise(card_number).nil? 
     number.reverse!
     relative_number = {'0' => 0, '1' => 2, '2' => 4, '3' => 6, '4' => 8, '5' => 1, '6' => 3, '7' => 5, '8' => 7, '9' => 9}
     sum = 0 

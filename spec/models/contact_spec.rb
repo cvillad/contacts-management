@@ -24,6 +24,13 @@ RSpec.describe Contact, type: :model do
       expect(another_contact.card_franchise).to eq("Mastercard")
     end
 
+    it "has a proper last_four_digits" do 
+      contact.save 
+      expect(contact.card_last_four_digits).to eq("4242")
+      another_contact = create :contact, card_number: "5105105105105100" #fake mastercard
+      expect(another_contact.card_last_four_digits).to eq("5100")
+    end
+
     it "has a valid name format" do 
       contact.name = "john $doe"
       expect(contact).not_to be_valid
