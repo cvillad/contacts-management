@@ -34,7 +34,7 @@
 
 <br>
 <%= link_to 'Export CSV', contacts_path(format: :csv) %>
-<%= form_tag contact_files_path, multipart: true do %>
-  <%= file_field_tag :file %>
-  <%= submit_tag "Upload" %>
+<%= form_with model: @contact_file do |f| %>
+  <%= f.file_field :file %>
+  <%= f.submit "Upload" %>
 <% end %>

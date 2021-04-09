@@ -83,12 +83,12 @@ RSpec.describe Contact, type: :model do
     end
   end
 
-  describe ".format_born_date" do 
+  describe ".format_birth_date" do 
     let(:contact){ build :contact }
 
     it "has the proper format" do 
       contact.birth_date = "2012-12-12"
-      expect(contact.format_born_date).to eq("2012 December 12")
+      expect(contact.format_birth_date).to eq("2012 December 12")
     end
   end
 end

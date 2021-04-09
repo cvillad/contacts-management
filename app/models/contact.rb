@@ -1,5 +1,4 @@
 class Contact < ApplicationRecord
-  require 'csv'
   belongs_to :user
   before_save -> {self.card_franchise = credit_card_franchise}
   before_create -> {self.card_franchise = credit_card_franchise}
@@ -18,6 +17,22 @@ class Contact < ApplicationRecord
     end
   end
 
+  def self.from_csv(user, file, map_headers)
+    file_path = ActiveStorage::Blob.service.send(:path_for, file.csv_file.key)
+    byebug
+    CSV.foreach(file_path, headers: true) do |row|
+      contact = user.contacts.build(
+        email: row[map_headers[:email]],
+        name: row[map_headers[:name]],
+        birth_date: row[map_headers[:birth_date]],
+        phone: row[map_headers[:phone]],
+        address: row[map_headers[:address]],
+        card_number: row[map_headers[:card_number]]
+      )
+      contact.save
+    end
+  end 
+
   def self.to_csv
     attributes = %w{name email address phone birth_date card_number card_franchise}
     CSV.generate(headers: true) do |csv|
@@ -32,6 +47,8 @@ class Contact < ApplicationRecord
     self[:birth_date].strftime("%Y %B %d") if self[:birth_date]
   end
 
+  private 
+
   def credit_card_franchise
     number = self[:card_number].to_s.gsub(/\D/, "") 
     return "Dinner's club" if number.length == 14 && number =~ /^3(0[0-5]|[68])/   # 300xxx-305xxx, 36xxxx, 38xxxx
@@ -41,8 +58,6 @@ class Contact < ApplicationRecord
     return "Discover" if number.length == 16 && number =~ /^6011/             # 6011xx
     return nil
   end
-
-  private 
 
   def validate_credit_card
     number = self[:card_number].to_s.gsub(/\D/, "")
