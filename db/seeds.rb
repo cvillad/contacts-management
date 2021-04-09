@@ -5,10 +5,10 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
-user = User.first
+user = User.create(email: "jdoe@gmail.com", password: "secret")
 Contact.create([
               { name: "John Doe1", 
-                born_date: "20121212",
+                birth_date: "20121212",
                 email: "jdoe1@gmail.com", 
                 card_number: "4242424242424242", 
                 phone: "(+57) 322-222-22-22",
@@ -16,7 +16,7 @@ Contact.create([
                 user: user
               },
               { name: "John Doe2", 
-                born_date: "20121212",
+                birth_date: "20121212",
                 email: "jdoe2@gmail.com", 
                 card_number: "4242424242424242", 
                 phone: "(+57) 322-222-22-22",
@@ -24,7 +24,7 @@ Contact.create([
                 user: user
               },
               { name: "John Doe3", 
-                born_date: "20121212",
+                birth_date: "20121212",
                 email: "jdoe3@gmail.com", 
                 card_number: "4242424242424242", 
                 phone: "(+57) 322-222-22-22",

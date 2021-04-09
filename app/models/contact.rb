@@ -7,28 +7,19 @@ class Contact < ApplicationRecord
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :address, presence: true
   validates :phone, presence: true, format: {with: /\A\(\+\d{2}\) (\d{3} \d{3} \d{2} \d{2}|\d{3}-\d{3}-\d{2}-\d{2})$\z/}
-  validates :born_date, presence: true
+  validates :birth_date, presence: true
   validates :card_number, presence: true
   validate :validate_credit_card
-  validates_each :born_date_before_type_cast do |record, attribute, value|
+  validates_each :birth_date_before_type_cast do |record, attribute, value|
     begin
-      value.include?("-") ? Date.strptime(value.to_s,"%F") : Date.strptime(value.to_s,"%Y%m%d")
+      value.include?("-") ? Date.strptime(value, "%F") : Date.strptime(value, "%Y%m%d")
     rescue
-      record.errors.add(:born_date, :invalid)
+      record.errors.add(:birth_date, :invalid)
     end
   end
 
-  def self.load_csv(file)
-    items = []
-    CSV.foreach(file.path, headers: true) do |row|
-      items << row.to_h
-    end
-    items
-    #import(items, validate: true, validate_uniqueness: true)
-  end 
-
   def self.to_csv
-    attributes = %w{name email phone born_date card_number card_franchise}
+    attributes = %w{name email address phone birth_date card_number card_franchise}
     CSV.generate(headers: true) do |csv|
       csv << attributes
       all.each do |contact|
@@ -37,8 +28,8 @@ class Contact < ApplicationRecord
     end
   end
 
-  def format_born_date
-    self[:born_date].strftime("%Y %B %d") if self[:born_date]
+  def format_birth_date
+    self[:birth_date].strftime("%Y %B %d") if self[:birth_date]
   end
 
   def credit_card_franchise

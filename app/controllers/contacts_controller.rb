@@ -9,22 +9,17 @@ class ContactsController < ApplicationController
   end
 
   def new
-    # begin
-    #   if Contact.from_csv(params[:file]).failed_instances.empty? 
-    #     flash[:notice] = "Employees imported successfully"
-    #   else 
-    #     flash[:alert] = "There is a problem with one or more records of your csv file"
-    #   end
-    # rescue => e
-    #   puts e.message
-    #   flash[:alert] = "There was a problem with your file or your file records."
-    # end
-    # redirect_to root_path
   end
 
   def create 
   end
 
   def destroy
+  end
+
+  private
+
+  def contact_params_mapped 
+    params.permit(Contact.attribute_names(&:to_sym))
   end
 end

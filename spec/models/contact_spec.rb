@@ -8,11 +8,11 @@ RSpec.describe Contact, type: :model do
     end
 
     it "should validate presence of required attributes" do 
-      contact = build :contact, name: "", phone: "", born_date: "", card_number: "", email: ""
+      contact = build :contact, name: "", phone: "", birth_date: "", card_number: "", email: ""
       expect(contact).not_to be_valid
       expect(contact.errors[:name]).to include("can't be blank")
       expect(contact.errors[:phone]).to include("can't be blank")
-      expect(contact.errors[:born_date]).to include("can't be blank")
+      expect(contact.errors[:birth_date]).to include("can't be blank")
       expect(contact.errors[:card_number]).to include("can't be blank")
       expect(contact.errors[:email]).to include("can't be blank")
     end
@@ -43,16 +43,16 @@ RSpec.describe Contact, type: :model do
       expect(contact).to be_valid
     end
 
-    it "has a valid born_date format" do 
-      contact.born_date = "2012-1212"
+    it "has a valid birth_date format" do 
+      contact.birth_date = "2012-1212"
       expect(contact).not_to be_valid
-      expect(contact.errors[:born_date]).to include("is invalid")
-      contact.born_date = "201212-12"
+      expect(contact.errors[:birth_date]).to include("is invalid")
+      contact.birth_date = "201212-12"
       expect(contact).not_to be_valid 
-      expect(contact.errors[:born_date]).to include("is invalid")
-      contact.born_date = "20071119"
+      expect(contact.errors[:birth_date]).to include("is invalid")
+      contact.birth_date = "20071119"
       expect(contact).to be_valid 
-      contact.born_date = "2007-11-19"
+      contact.birth_date = "2007-11-19"
       expect(contact).to be_valid
     end
 
@@ -87,7 +87,7 @@ RSpec.describe Contact, type: :model do
     let(:contact){ build :contact }
 
     it "has the proper format" do 
-      contact.born_date = "2012-12-12"
+      contact.birth_date = "2012-12-12"
       expect(contact.format_born_date).to eq("2012 December 12")
     end
   end

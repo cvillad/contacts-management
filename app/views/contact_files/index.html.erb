@@ -1,0 +1,28 @@
+<%= link_to "Log out", destroy_user_session_path, method: :delete %>
+
+<p id="notice"><%= notice %></p>
+
+<h1>User files</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Filename</th>
+      <th>Size</th>
+      <th>Upload date</th>
+      <th>Status</th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @files.each do |file| %>
+      <tr>
+        <td><%= file.blob.filename %></td>
+        <td><%= "#{file.blob.byte_size} bytes" %></td>
+        <td><%= "Uploaded #{time_ago_in_words(file.blob.created_at)} ago" %></td>
+        <td><%= link_to 'Destroy', file_path(file.id), method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
