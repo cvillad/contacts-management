@@ -61,10 +61,7 @@ RSpec.describe ContactFilesController, type: :controller do
       end
 
       context "when no file provided" do 
-        let(:params) {
-          {}
-        }
-        subject {post :create, params: params}
+        subject {post :create, params: {}}
         it "should redirect to contacts_path" do 
           subject
           expect(response).to have_http_status(:found)
@@ -72,35 +69,51 @@ RSpec.describe ContactFilesController, type: :controller do
           expect(response).to redirect_to "http://test.host/contacts"
         end
       end
-
-      context "when invaid provided" do 
-        let(:file_path) {"spec/csv_files/empty_contacts.csv"}
-        let(:params) {
-          {contact_file: { file: Rack::Test::UploadedFile.new(file_path, 'text/csv') } }
-        }
-        subject {post :create, params: params}
-        it "should redirect to contacts_path" do 
-          subject
-          expect(response).to have_http_status(:found)
-          expect(flash[:alert]).to eq("There was a problem with your file")
-          expect(response).to redirect_to "http://test.host/contacts"
-        end
-      end
     end
 
     describe "#destroy" do 
-      
-      subject{delete :destroy, params: { id: 1 } }
+      csv_file = create_csv_file("spec/csv_files/valid_contacts.csv")
+      let(:contact_file) {create :contact_file, csv_file: csv_file, user: user}
+
+      subject{delete :destroy, params: { id: contact_file } }
+
+      it "should redirect to contact_files_path" do 
+        subject
+        expect(response).to have_http_status(:found)
+        expect(flash[:notice]).to eq("File deleted successfully")
+        expect(response).to redirect_to "http://test.host/contact_files"
+      end
       
     end
 
     describe "#match_headers" do 
-      subject{get :match_headers, params: { id: 1 } }
-      
+      csv_file = create_csv_file("spec/csv_files/valid_contacts.csv")
+      let(:contact_file) {create :contact_file, csv_file: csv_file, user: user}
+
+      subject{get :match_headers, params: { id: contact_file} }
+
+      it "should have a succes response" do 
+        subject
+        expect(response).to have_http_status(:ok)
+      end
     end
 
     describe "#import" do 
-      subject{post :import, params: { id: 1 }}
+      csv_file = create_csv_file("spec/csv_files/valid_contacts.csv")
+      let(:contact_file) {create :contact_file, csv_file: csv_file, user: user}
+      
+      subject{post :import, params: { id: contact_file, name: "full_name", birth_date: "date_of birth", phone: "cellphone", address: " address", card_number: "credit_card_number", email: "email_address" }}
+
+      it "should redirect_to contacts_path" do 
+        subject 
+        expect(response).to have_http_status(:found)
+        expect(flash[:notice]).to eq("Importing records from csv file...")
+        expect(response).to redirect_to "http://test.host/contact_files"
+      end
+
+      it "should redirect_to contacts_path" do 
+        expect{subject}.to change{Contact.count}.by(3) 
+      end
       
     end
   end

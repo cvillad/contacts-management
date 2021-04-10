@@ -1,18 +1,19 @@
 class ContactFilesController < ApplicationController
   before_action :authenticate_user!
+  before_action :set_contact_file, only:[:import, :match_headers, :destroy]
+
   def index 
     @files = current_user.contact_files.order(created_at: :desc)
   end
 
   def match_headers
-    @contact_file = current_user.contact_files.find(params[:id])
     @headers = @contact_file.csv_headers 
   end
 
   def import
-    @contact_file = current_user.contact_files.find(params[:id])
     @contact_file.import(current_user, mapped_headers)
-    redirect_to root_path
+    flash[:notice] = "Importing records from csv file..."
+    redirect_to contact_files_path
   end
 
   def create
@@ -38,13 +39,21 @@ class ContactFilesController < ApplicationController
   end
 
   def destroy
-    current_user.contact_files.find(params[:id]).destroy
+    if @contact_file.destroy
+      flash[:notice] = "File deleted successfully"
+    else  
+      flash[:alert] = "There was a problem to delete this file"
+    end
     redirect_to contact_files_path
   end
 
   private 
   def contact_file_params
     params.require(:contact_file).permit(:file)
+  end
+
+  def set_contact_file 
+    @contact_file = current_user.contact_files.find(params[:id])
   end
 
   def mapped_headers
