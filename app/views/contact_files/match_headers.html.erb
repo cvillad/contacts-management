@@ -1,7 +1,7 @@
 <h1>Import CSV</h1>
 
 <h5><%= @headers %></h5>
-<%= form_tag contacts_path(file_id: @contact_file.id) do %>
+<%= form_tag contact_file_import_path(@contact_file) do %>
   <div>
     <%= label_tag :name %>
     <%= select_tag :name, options_for_select(@headers, @headers[0]) %>
