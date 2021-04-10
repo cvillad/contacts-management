@@ -6,20 +6,20 @@ class ContactFilesController < ApplicationController
 
   def match_headers
     @contact_file = current_user.contact_files.find(params[:id])
-    @headers = file_headers(@contact_file.csv_path)
+    @headers = @contact_file.csv_headers 
   end
 
   def import
     @contact_file = current_user.contact_files.find(params[:id])
-    Contact.from_csv(current_user, @contact_file, mapped_headers)
+    @contact_file.import(current_user, mapped_headers)
     redirect_to root_path
   end
 
   def create
     file = contact_file_params[:file]
-    @contact_file = current_user.contact_files.build(name: file.original_filename, headers: file_headers(file.path), csv_file: file)
+    @contact_file = current_user.contact_files.build(csv_file: file)
     @contact_file
-    @contact_file.save!
+    @contact_file.save
     redirect_to contact_files_path
   end
 
@@ -35,10 +35,6 @@ class ContactFilesController < ApplicationController
 
   def mapped_headers
     params.permit(:name, :birth_date, :phone, :address, :card_number, :email).to_h
-  end
-
-  def file_headers(file_path)
-    CSV.open(file_path, &:readline)
   end
 
 end

@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :contact_file do
-    name { "MyString" }
-    headers { "MyText" }
+    sequence(:name) { |n| "sample_file#{n}.csv" }
+    headers { [] }
     association :user
     status { 1 }
   end

@@ -13,6 +13,7 @@ class ContactsController < ApplicationController
 
   def destroy
     @contact.destroy
+    redirect_to contacts_path
   end
 
   private

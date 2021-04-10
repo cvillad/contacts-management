@@ -31,21 +31,6 @@ class Contact < ApplicationRecord
     self.card_number_hash = new_card_number
   end
 
-  def self.from_csv(user, file, map_headers)
-    file_path = ActiveStorage::Blob.service.send(:path_for, file.csv_file.key)
-    CSV.foreach(file_path, headers: true) do |row|
-      contact = user.contacts.build(
-        email: row[map_headers[:email]],
-        name: row[map_headers[:name]],
-        birth_date: row[map_headers[:birth_date]],
-        phone: row[map_headers[:phone]],
-        address: row[map_headers[:address]],
-        card_number: row[map_headers[:card_number]]
-      )
-      contact.save
-    end
-  end 
-
   def self.to_csv
     attributes = %w{name email address phone birth_date card_number card_franchise}
     CSV.generate(headers: true) do |csv|
