@@ -1,11 +1,9 @@
 class ContactFile < ApplicationRecord
   belongs_to :user
   before_save -> {
-    self.name = csv_file.blob.original_filename,
-    self.headers = file_headers
+    self.name = csv_file.blob.filename
+    self.headers = csv_headers
   }
-  validates :name, presence: true
-  validates :headers, presence: true
   has_one_attached :csv_file, dependent: :destroy
   validates :csv_file, attached: true, content_type: ["text/csv"]
 

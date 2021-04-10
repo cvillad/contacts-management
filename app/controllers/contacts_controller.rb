@@ -12,7 +12,11 @@ class ContactsController < ApplicationController
   end
 
   def destroy
-    @contact.destroy
+    if @contact.destroy
+      flash[:notice] = "Contact deleted successfully"
+    else
+      flash[:alert] = "Cannot delete the contact"
+    end
     redirect_to contacts_path
   end
 
@@ -20,5 +24,8 @@ class ContactsController < ApplicationController
 
   def set_contact 
     @contact = current_user.contacts.find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    flash[:alert] = "Cannot delete the contact"
+    redirect_to contacts_path
   end
 end

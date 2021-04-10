@@ -16,16 +16,30 @@ class ContactFilesController < ApplicationController
   end
 
   def create
-    file = contact_file_params[:file]
-    @contact_file = current_user.contact_files.build(csv_file: file)
-    @contact_file
-    @contact_file.save
-    redirect_to contact_files_path
+    if params[:contact_file].present?
+      file = contact_file_params[:file]
+      csv_file = ActiveStorage::Blob.create_and_upload!(
+        io: File.open(file, 'rb'),
+        filename: file.original_filename,
+        content_type: 'text/csv'
+      )
+      @contact_file = current_user.contact_files.build(csv_file: csv_file)
+      if @contact_file.save
+        flash[:notice] = "File uploaded successfully"
+        redirect_to contact_files_path
+      else
+        flash[:alert] = "There was a problem with your file"
+        redirect_to contacts_path
+      end
+    else
+      flash[:alert] = "No file provided"
+      redirect_to contacts_path
+    end
   end
 
   def destroy
-    current_user.contact_files.find(params[:id]).purge
-    redirect_to files_path
+    current_user.contact_files.find(params[:id]).destroy
+    redirect_to contact_files_path
   end
 
   private 
