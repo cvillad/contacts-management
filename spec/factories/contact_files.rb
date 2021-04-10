@@ -2,7 +2,7 @@ FactoryBot.define do
   factory :contact_file do
     name { "MyString" }
     headers { "MyText" }
-    user { nil }
+    association :user
     status { 1 }
   end
 end

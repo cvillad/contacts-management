@@ -11,17 +11,18 @@
       <th>Size</th>
       <th>Upload date</th>
       <th>Status</th>
-      <th></th>
+      <th colspan="2"></th>
     </tr>
   </thead>
 
   <tbody>
     <% @files.each do |file| %>
       <tr>
-        <td><%= file.blob.filename %></td>
-        <td><%= "#{file.blob.byte_size} bytes" %></td>
-        <td><%= "Uploaded #{time_ago_in_words(file.blob.created_at)} ago" %></td>
-        <td><%= link_to 'Destroy', file_path(file.id), method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= file.name%></td>
+        <td><%= "#{file.csv_file.blob.byte_size} bytes" %></td>
+        <td><%= "Uploaded #{time_ago_in_words(file.created_at)} ago" %></td>
+        <td><%= link_to 'Add to records', new_contact_path(file_id: file.id) %></td>
+        <td><%= link_to 'Destroy', file, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
   </tbody>

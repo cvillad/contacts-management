@@ -1,26 +1,30 @@
-<%= link_to "Log out", destroy_user_session_path, method: :delete %>
+<h1>Import CSV</h1>
 
-<p id="notice"><%= notice %></p>
-
-<h1>Contacts</h1>
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Email</th>
-      <th>Address</th>
-      <th>Date of birth</th>
-      <th>Credit card</th>
-      <th>Franchise</th>
-      <th></th>
-    </tr>
-  </thead>
-
-  <tbody>
-
-  </tbody>
-</table>
-
-<br>
-
+<h5><%= @headers %></h5>
+<%= form_tag contacts_path(file_id: @contact_file.id) do %>
+  <div>
+    <%= label_tag :name %>
+    <%= select_tag :name, options_for_select(@headers, @headers[0]) %>
+  </div>
+  <div>
+    <%= label_tag :birth_date %>
+    <%= select_tag :birth_date, options_for_select(@headers, @headers[1]) %>
+  </div>
+  <div>
+    <%= label_tag :phone %>
+    <%= select_tag :phone, options_for_select(@headers, @headers[2]) %>
+  </div>
+  <div>
+    <%= label_tag :address %>
+    <%= select_tag :address, options_for_select(@headers, @headers[3]) %>
+  </div>
+  <div>
+    <%= label_tag :card_number %>
+    <%= select_tag :card_number, options_for_select(@headers, @headers[4]) %>
+  </div>
+  <div>
+    <%= label_tag :email %>
+    <%= select_tag :email, options_for_select(@headers, @headers[5]) %>
+  </div>
+  <%= submit_tag :submit %>
+<% end %>
