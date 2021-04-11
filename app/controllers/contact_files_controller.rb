@@ -11,7 +11,7 @@ class ContactFilesController < ApplicationController
   end
 
   def import
-    @contact_file.import(current_user, mapped_headers)
+    @contact_file.import(mapped_headers)
     flash[:notice] = "Importing records from csv file..."
     redirect_to contact_files_path
   end
@@ -19,12 +19,8 @@ class ContactFilesController < ApplicationController
   def create
     if params[:contact_file].present?
       file = contact_file_params[:file]
-      csv_file = ActiveStorage::Blob.create_and_upload!(
-        io: File.open(file, 'rb'),
-        filename: file.original_filename,
-        content_type: 'text/csv'
-      )
-      @contact_file = current_user.contact_files.build(csv_file: csv_file)
+      contact_files_manager = ContactFilesManager.new(current_user, file)
+      @contact_file = contact_files_manager.contact_file
       if @contact_file.save
         flash[:notice] = "File uploaded successfully"
         redirect_to contact_files_path

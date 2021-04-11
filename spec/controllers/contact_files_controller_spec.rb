@@ -87,32 +87,80 @@ RSpec.describe ContactFilesController, type: :controller do
     end
 
     describe "#match_headers" do 
-      csv_file = create_csv_file("spec/csv_files/valid_contacts.csv")
-      let(:contact_file) {create :contact_file, csv_file: csv_file, user: user}
+      context "when valid file provided" do
+        csv_file = create_csv_file("spec/csv_files/valid_contacts.csv")
+        let(:contact_file) {create :contact_file, csv_file: csv_file, user: user}
+        
+        subject{get :match_headers, params: { id: contact_file} }
 
-      subject{get :match_headers, params: { id: contact_file} }
+        it "should have a succes response" do 
+          subject
+          expect(response).to have_http_status(:ok)
+        end
+      end
 
-      it "should have a succes response" do 
-        subject
-        expect(response).to have_http_status(:ok)
+      context "when invalid file" do
+        csv_file = create_csv_file("spec/csv_files/empty_contacts.csv")
+        let(:contact_file) {create :contact_file, csv_file: csv_file, user: user}
+        
+        subject{get :match_headers, params: { id: contact_file} }
+
+        it "should have a succes response" do 
+          subject
+          expect(response).to have_http_status(:ok)
+        end
       end
     end
 
     describe "#import" do 
-      csv_file = create_csv_file("spec/csv_files/valid_contacts.csv")
-      let(:contact_file) {create :contact_file, csv_file: csv_file, user: user}
-      
-      subject{post :import, params: { id: contact_file, name: "full_name", birth_date: "date_of birth", phone: "cellphone", address: " address", card_number: "credit_card_number", email: "email_address" }}
+      context "when file is valid" do
+        csv_file = create_csv_file("spec/csv_files/valid_contacts.csv")
+        let(:contact_file) {create :contact_file, csv_file: csv_file, user: user}
+        subject{post :import, params: { id: contact_file, name: "full_name", birth_date: "date_of birth", phone: "cellphone", address: " address", card_number: "credit_card_number", email: "email_address" }}
 
-      it "should redirect_to contacts_path" do 
-        subject 
-        expect(response).to have_http_status(:found)
-        expect(flash[:notice]).to eq("Importing records from csv file...")
-        expect(response).to redirect_to "http://test.host/contact_files"
+        it "should redirect_to contacts_path" do 
+          subject 
+          expect(response).to have_http_status(:found)
+          #expect(flash[:notice]).to eq("Importing records from csv file...")
+          expect(response).to redirect_to "http://test.host/contact_files"
+        end
+
+        it "should create 3 contacts" do 
+          expect{subject}.to change{Contact.count}.by(3) 
+        end
       end
 
-      it "should redirect_to contacts_path" do 
-        expect{subject}.to change{Contact.count}.by(3) 
+      
+      context "when file has some invalid contacts" do
+        # full_name,email_address,cellphone,date_of birth,credit_card_number, address
+        # John Doe3,jdoe3@gmail.com,(+57) 322229-52-22,2012-12-12,4242424242424242,Calle lagartos 75  invalid phone
+        # John Doe4,jdoe4gmail.com,(+57) 322-272-52-25,2012-12-12,424242424242422,Calle lagartos 75   invalid email, invalid card_number
+        # John Doe5,jdoe5@gmail.com,(+57) 322-221-12-62,2012-12-12,4242424242424242,Calle lagartos 75
+        csv_file = create_csv_file("spec/csv_files/invalid_contacts.csv")
+        let(:contact_file) {create :contact_file, csv_file: csv_file, user: user}
+        subject{post :import, params: { id: contact_file, name: "full_name", birth_date: "date_of birth", phone: "cellphone", address: " address", card_number: "credit_card_number", email: "email_address" }}
+
+        it "should redirect_to contacts_path" do 
+          subject 
+          expect(response).to have_http_status(:found)
+          #expect(flash[:notice]).to eq("Importing records from csv file...")
+          expect(response).to redirect_to "http://test.host/contact_files"
+        end
+
+        it "should have the proper errors" do 
+          subject
+          expect(FailedContact.first.error_details).to include("Phone is invalid")
+          expect(FailedContact.second.error_details).to include("Email is invalid")
+          expect(FailedContact.second.error_details).to include("Card number is invalid")
+        end
+
+        it "should create one contact" do 
+          expect{subject}.to change{Contact.count}.by(1) 
+        end
+
+        it "should create two failed_contacts" do 
+          expect{subject}.to change{FailedContact.count}.by(2)
+        end
       end
       
     end

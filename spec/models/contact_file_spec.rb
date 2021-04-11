@@ -36,10 +36,10 @@ RSpec.describe ContactFile, type: :model do
           io: File.open(file, 'rb'),
           filename: 'valid_contacts.csv',
           content_type: 'text/csv'
-        ).signed_id
-        contact_file = ContactFile.new(csv_file: csv_file)
+        )
+        contact_file = create :contact_file, csv_file: csv_file, user: user
         map_headers = {name: "full_name", birth_date: "date_of birth", phone: "cellphone", address: " address", card_number: "credit_card_number", email: "email_address"}
-        expect{contact_file.import(user, map_headers)}.to change{Contact.count}.by(3)
+        expect{contact_file.import(map_headers)}.to change{Contact.count}.by(3)
       end
     end
 
@@ -51,9 +51,9 @@ RSpec.describe ContactFile, type: :model do
           filename: 'empty_contacts.csv',
           content_type: 'text/csv'
         ).signed_id
-        contact_file = ContactFile.new(csv_file: csv_file)
+        contact_file = create :contact_file, csv_file: csv_file, user: user
         map_headers = {name: "full_name", birth_date: "date_of birth", phone: "cellphone", address: " address", card_number: "credit_card_number", email: "email_address"}
-        expect{contact_file.import(user, map_headers)}.to change{Contact.count}.by(0)
+        expect{contact_file.import(map_headers)}.to change{Contact.count}.by(0)
       end
     end
 
@@ -65,9 +65,9 @@ RSpec.describe ContactFile, type: :model do
           filename: 'no_headers_contacts.csv',
           content_type: 'text/csv'
         ).signed_id
-        contact_file = ContactFile.new(csv_file: csv_file)
+        contact_file = create :contact_file, csv_file: csv_file, user: user
         map_headers = {name: "full_name", birth_date: "date_of birth", phone: "cellphone", address: " address", card_number: "credit_card_number", email: "email_address"}
-        expect{contact_file.import(user, map_headers)}.to change{Contact.count}.by(0)
+        expect{contact_file.import(map_headers)}.to change{Contact.count}.by(0)
       end
     end
   end

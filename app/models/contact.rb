@@ -60,6 +60,7 @@ class Contact < ApplicationRecord
   def valid_card?
     number = self.card_number_hash.to_s.gsub(/\D/, "")
     errors.add(:card_number, :invalid) if credit_card_franchise(card_number).nil? 
+    return false
     number.reverse!
     relative_number = {'0' => 0, '1' => 2, '2' => 4, '3' => 6, '4' => 8, '5' => 1, '6' => 3, '7' => 5, '8' => 7, '9' => 9}
     sum = 0 
