@@ -4,6 +4,8 @@ class ContactFile < ApplicationRecord
     self.name = csv_file.blob.filename
     self.headers = csv_headers
   }
+  enum status: {waiting: 0, processing: 1, failed: 2, finished: 3}
+  attr_accessor :failed_contacts_count, :success_contacts_count
 
   has_one_attached :csv_file, dependent: :destroy
   has_many :failed_contacts
@@ -19,7 +21,9 @@ class ContactFile < ApplicationRecord
   end
 
   def import(map_headers)
+    @failed_contacts_count, @success_contacts_count = 0, 0
     CSV.foreach(csv_path, headers: true) do |row|
+      self.status = 1
       contact = user.contacts.build(
         email: row[map_headers[:email]],
         name: row[map_headers[:name]],
@@ -29,6 +33,7 @@ class ContactFile < ApplicationRecord
         card_number: row[map_headers[:card_number]]
       )
       if contact.save
+        @success_contacts_count+= 1
       else
         user.failed_contacts.create(
           email: row[map_headers[:email]],
@@ -39,6 +44,7 @@ class ContactFile < ApplicationRecord
           card_number: row[map_headers[:card_number]],
           error_details: contact.errors.full_messages
         )
+        @failed_contacts_count+= 1
       end
     end
   end

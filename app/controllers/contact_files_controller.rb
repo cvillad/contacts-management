@@ -13,6 +13,11 @@ class ContactFilesController < ApplicationController
   def import
     @contact_file.import(mapped_headers)
     flash[:notice] = "Importing records from csv file..."
+    if @contact_file.success_contacts_count == 0
+      @contact_file.failed!
+    else
+      @contact_file.finished!
+    end
     redirect_to contact_files_path
   end
 

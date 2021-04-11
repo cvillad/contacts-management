@@ -17,6 +17,7 @@
         <td><%= file.name%></td>
         <td><%= "#{file.csv_file.blob.byte_size} bytes" %></td>
         <td><%= "Uploaded #{time_ago_in_words(file.created_at)} ago" %></td>
+        <td><%= file.status %></td>
         <td><%= link_to 'Add to records', contact_file_import_path(file) %></td>
         <td><%= link_to 'Destroy', file, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
