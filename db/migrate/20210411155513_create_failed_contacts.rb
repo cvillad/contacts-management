@@ -8,7 +8,7 @@ class CreateFailedContacts < ActiveRecord::Migration[6.1]
       t.string :phone
       t.string :card_number
       t.text :error_details, array: true, default: []
-      t.references :contact_file, null: false, foreign_key: true
+      t.references :user, null: false, foreign_key: true
 
       t.timestamps
     end

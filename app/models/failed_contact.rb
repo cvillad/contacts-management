@@ -1,3 +1,3 @@
 class FailedContact < ApplicationRecord
-  belongs_to :contact_file
+  belongs_to :user
 end

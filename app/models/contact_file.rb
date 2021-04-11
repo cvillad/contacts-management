@@ -30,7 +30,7 @@ class ContactFile < ApplicationRecord
       )
       if contact.save
       else
-        failed_contacts.create(
+        user.failed_contacts.create(
           email: row[map_headers[:email]],
           name: row[map_headers[:name]],
           birth_date: row[map_headers[:birth_date]],

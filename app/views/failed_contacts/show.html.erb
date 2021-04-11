@@ -1,0 +1,18 @@
+<p><strong>Name: </strong><%=@failed_contact.name%></p>
+<p><strong>Email: </strong><%=@failed_contact.email%></p>
+<p><strong>Phone: </strong><%=@failed_contact.phone%></p>
+<p><strong>Address: </strong><%=@failed_contact.address%></p>
+<p><strong>Birth date: </strong><%=@failed_contact.birth_date%></p>
+<p><strong>Credit card: </strong><%=@failed_contact.card_number%></p>
+<table>
+  <thead>
+    <th>Errors</th>
+  <thead>
+  <tbody>
+    <% @failed_contact.error_details.each do |error| %>
+      <tr>
+        <td><%= error %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

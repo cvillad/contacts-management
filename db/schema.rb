@@ -77,10 +77,10 @@ ActiveRecord::Schema.define(version: 2021_04_11_155513) do
     t.string "phone"
     t.string "card_number"
     t.text "error_details", default: [], array: true
-    t.bigint "contact_file_id", null: false
+    t.bigint "user_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["contact_file_id"], name: "index_failed_contacts_on_contact_file_id"
+    t.index ["user_id"], name: "index_failed_contacts_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -99,5 +99,5 @@ ActiveRecord::Schema.define(version: 2021_04_11_155513) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "contact_files", "users"
   add_foreign_key "contacts", "users"
-  add_foreign_key "failed_contacts", "contact_files"
+  add_foreign_key "failed_contacts", "users"
 end
