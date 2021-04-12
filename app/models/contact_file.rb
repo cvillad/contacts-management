@@ -1,10 +1,5 @@
 class ContactFile < ApplicationRecord
   belongs_to :user
-  before_save -> {
-    self.name = csv_file.blob.filename
-    self.path = csv_path
-    self.headers = csv_headers 
-  }
   enum status: {waiting: 0, processing: 1, failed: 2, finished: 3}
   attr_accessor :failed_contacts_count, :success_contacts_count
 
@@ -13,6 +8,10 @@ class ContactFile < ApplicationRecord
 
   validates :csv_file, attached: true, content_type: ["text/csv"]
   validate :validate_empty_file
+
+  def path 
+    Rails.env.test? ? ActiveStorage::Blob.service.send(:path_for, csv_file.key) : csv_file.blob.url
+  end
 
   def import(map_headers)
     success = false
@@ -46,20 +45,11 @@ class ContactFile < ApplicationRecord
 
   private
   def validate_empty_file
-    if csv_file.present?
-      self.errors.add(:csv_file, :blank) if csv_headers.empty? 
-    end
+    self.errors.add(:csv_file, :blank) if csv_file.present? && csv_headers.empty? 
   end
 
   def csv_headers
-    CSV.open(csv_path, headers: true).read.headers
+    CSV.open(path, headers: true).read.headers
   end
-
-  def csv_path
-    if Rails.env.production?
-      csv_file.url
-    else
-      ActiveStorage::Blob.service.send(:path_for, csv_file.key)
-    end
-  end
+  
 end
