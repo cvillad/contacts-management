@@ -30,6 +30,8 @@ gem 'sidekiq', '~> 6.1.3'
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.4', require: false
+gem 'will_paginate', '~> 3.3.0'
+gem 'will_paginate-bootstrap4'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

@@ -1,6 +1,6 @@
 <h1>User files</h1>
-
-<table>
+<%= will_paginate(@contact_files, :renderer => WillPaginate::ActionView::BootstrapLinkRenderer, class: 'justify-content-center') %>
+<table class="table">
   <thead>
     <tr>
       <th>Filename</th>
@@ -12,7 +12,7 @@
   </thead>
 
   <tbody>
-    <% @files.each do |file| %>
+    <% @contact_files.each do |file| %>
       <tr>
         <td><%= link_to file.name, url_for(file.csv_file), target: :_blank %></td>
         <td><%= file.headers %></td>

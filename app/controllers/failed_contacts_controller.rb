@@ -3,7 +3,7 @@ class FailedContactsController < ApplicationController
   before_action :set_failed_contact, only: :show
 
   def index  
-    @failed_contacts = current_user.failed_contacts.order(created_at: :desc)
+    @failed_contacts = current_user.failed_contacts.order(created_at: :desc).paginate(page: params[:page], per_page: 10)
   end
 
   def show 

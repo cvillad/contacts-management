@@ -3,7 +3,7 @@ class ContactsController < ApplicationController
   before_action :set_contact, only: :destroy
 
   def index
-    @contacts = current_user.contacts
+    @contacts = current_user.contacts.paginate(page: params[:page], per_page: 10)
     @contact_file = current_user.contact_files.build
     respond_to do |format|
       format.html

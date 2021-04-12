@@ -1,16 +1,18 @@
 <h1>Contacts</h1>
 
-<table>
+<%= will_paginate(@failed_contacts, :renderer => WillPaginate::ActionView::BootstrapLinkRenderer, class: 'justify-content-center') %>
+
+<table class="table">
   <thead>
     <tr>
-      <th>Name</th>
-      <th>Email</th>
-      <th>Phone</th>
-      <th>Address</th>
-      <th>Date of birth</th>
-      <th>Credit card</th>
-      <th>Created at</th>
-      <th></th>
+      <th scope="col">Name</th>
+      <th scope="col">Email</th>
+      <th scope="col">Phone</th>
+      <th scope="col">Address</th>
+      <th scope="col">Date of birth</th>
+      <th scope="col">Credit card</th>
+      <th scope="col">Upload date</th>
+      <th scope="col"></th>
     </tr>
   </thead>
 
@@ -24,7 +26,7 @@
         <td><%= contact.birth_date %></td>
         <td><%= contact.card_number %></td>
         <td><%= "#{time_ago_in_words(contact.created_at)} ago" %></td>
-        <td><%= link_to "Show error detail", contact %> </td>
+        <td><%= link_to "View", contact %> </td>
       </tr>
     <% end %>
   </tbody>
