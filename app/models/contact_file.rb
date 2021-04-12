@@ -56,6 +56,10 @@ class ContactFile < ApplicationRecord
   end
 
   def csv_path
-    ActiveStorage::Blob.service.send(:path_for, csv_file.key)
+    if Rails.env.production?
+      csv_file.url
+    else
+      ActiveStorage::Blob.service.send(:path_for, csv_file.key)
+    end
   end
 end
