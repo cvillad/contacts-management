@@ -9,6 +9,7 @@
       <th>Address</th>
       <th>Date of birth</th>
       <th>Credit card</th>
+      <th>Created at</th>
       <th></th>
     </tr>
   </thead>
@@ -22,6 +23,7 @@
         <td><%= contact.address %></td>
         <td><%= contact.birth_date %></td>
         <td><%= contact.card_number %></td>
+        <td><%= "#{time_ago_in_words(contact.created_at)} ago" %></td>
         <td><%= link_to "Show error detail", contact %> </td>
       </tr>
     <% end %>

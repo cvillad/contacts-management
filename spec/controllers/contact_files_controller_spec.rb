@@ -98,18 +98,6 @@ RSpec.describe ContactFilesController, type: :controller do
           expect(response).to have_http_status(:ok)
         end
       end
-
-      context "when invalid file" do
-        csv_file = create_csv_file("spec/csv_files/empty_contacts.csv")
-        let(:contact_file) {create :contact_file, csv_file: csv_file, user: user}
-        
-        subject{get :match_headers, params: { id: contact_file} }
-
-        it "should have a succes response" do 
-          subject
-          expect(response).to have_http_status(:ok)
-        end
-      end
     end
 
     describe "#import" do 
@@ -121,12 +109,8 @@ RSpec.describe ContactFilesController, type: :controller do
         it "should redirect_to contacts_path" do 
           subject 
           expect(response).to have_http_status(:found)
-          #expect(flash[:notice]).to eq("Importing records from csv file...")
+          expect(flash[:notice]).to eq("Importing records from csv file...")
           expect(response).to redirect_to "http://test.host/contact_files"
-        end
-
-        it "should create 3 contacts" do 
-          expect{subject}.to change{Contact.count}.by(3) 
         end
       end
 
@@ -143,23 +127,8 @@ RSpec.describe ContactFilesController, type: :controller do
         it "should redirect_to contacts_path" do 
           subject 
           expect(response).to have_http_status(:found)
-          #expect(flash[:notice]).to eq("Importing records from csv file...")
+          expect(flash[:notice]).to eq("Importing records from csv file...")
           expect(response).to redirect_to "http://test.host/contact_files"
-        end
-
-        it "should have the proper errors" do 
-          subject
-          expect(FailedContact.first.error_details).to include("Phone is invalid")
-          expect(FailedContact.second.error_details).to include("Email is invalid")
-          expect(FailedContact.second.error_details).to include("Card number is invalid")
-        end
-
-        it "should create one contact" do 
-          expect{subject}.to change{Contact.count}.by(1) 
-        end
-
-        it "should create two failed_contacts" do 
-          expect{subject}.to change{FailedContact.count}.by(2)
         end
       end
       

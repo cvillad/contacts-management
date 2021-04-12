@@ -7,18 +7,21 @@ class ContactFilesController < ApplicationController
   end
 
   def match_headers
-    @headers = @contact_file.csv_headers 
+    @headers = @contact_file.headers
   end
 
   def import
-    @contact_file.import(mapped_headers)
+    ContactsImportWorker.perform_async(@contact_file.id, mapped_headers)
     flash[:notice] = "Importing records from csv file..."
-    if @contact_file.success_contacts_count == 0 && !@contact_file.waiting?
-      @contact_file.failed!
-    else
-      @contact_file.finished!
-    end
     redirect_to contact_files_path
+    # @contact_file.import(mapped_headers)
+    # flash[:notice] = "Importing records from csv file..."
+    # if @contact_file.success_contacts_count == 0 && !@contact_file.waiting?
+    #   @contact_file.failed!
+    # else
+    #   @contact_file.finished!
+    # end
+    # redirect_to contact_files_path
   end
 
   def create
@@ -30,6 +33,7 @@ class ContactFilesController < ApplicationController
         flash[:notice] = "File uploaded successfully"
         redirect_to contact_files_path
       else
+        byebug
         flash[:alert] = "There was a problem with your file"
         redirect_to contacts_path
       end
