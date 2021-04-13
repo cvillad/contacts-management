@@ -10,16 +10,11 @@ class ContactFile < ApplicationRecord
   validates :headers, presence: {message: "CSV file can't be blank"}
   validates :csv_file, attached: true, content_type: ["text/csv"]
 
-  def path 
-    Rails.env.test? ? ActiveStorage::Blob.service.send(:path_for, csv_file.key) : csv_file.url
-  end
-
   def import(map_headers)
     success = false
     map_headers.symbolize_keys!
     table = CSV.parse(csv_file.download, headers:  true)
     table.each do |row|
-      self.processing!
       contact = user.contacts.build(
         email: row[map_headers[:email]],
         name: row[map_headers[:name]],
