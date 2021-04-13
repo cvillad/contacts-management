@@ -1,0 +1,4 @@
+<h3>Upload file</h3>
+<%= form_with model: @contact_file, url: contact_files_path, locale: true, html: {id: "contact-file-form"} do |f| %>
+  <%= f.file_field :file, id: "file"  %>
+<% end %>

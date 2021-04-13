@@ -18,8 +18,8 @@ RSpec.describe ContactFilesController, type: :controller do
       it_behaves_like "not_signed_user_action"
     end
 
-    describe "#match_headers" do 
-      subject{get :match_headers, params: { id: 1 } }
+    describe "#new" do 
+      subject{get :new }
       it_behaves_like "not_signed_user_action"
     end
 
@@ -86,12 +86,12 @@ RSpec.describe ContactFilesController, type: :controller do
       
     end
 
-    describe "#match_headers" do 
+    describe "#new" do 
       context "when valid file provided" do
         csv_file = create_csv_file("spec/csv_files/valid_contacts.csv")
         let(:contact_file) {create :contact_file, csv_file: csv_file, user: user}
         
-        subject{get :match_headers, params: { id: contact_file} }
+        subject{get :new }
 
         it "should have a succes response" do 
           subject

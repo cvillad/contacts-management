@@ -4,7 +4,6 @@ Rails.application.routes.draw do
   resources :contacts, only: [:index, :destroy]
   resources :contact_files, except: [:edit, :update, :show]
   resources :failed_contacts, only: [:index, :show]
-  get '/contact_file/import/:id', to: 'contact_files#match_headers', as: 'contact_file_import'
   post '/contact_file/import/:id', to: 'contact_files#import'
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 end

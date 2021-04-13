@@ -19,6 +19,22 @@ RSpec.describe ContactFile, type: :model do
       expect(contact_file.status).to eq("waiting")
     end
 
+    it "should validate presence of attributes" do
+      contact_file.matched_headers = ""
+      contact_file.headers = []
+      contact_file.name = ""
+      expect(contact_file).not_to be_valid
+      expect(contact_file.errors[:matched_headers]).to include("can't be blank")
+      expect(contact_file.errors[:headers]).to include("can't be blank")
+      expect(contact_file.errors[:name]).to include("can't be blank")
+    end
+
+    it "should validate presence of attachable attributes" do 
+      contact_file = build :contact_file
+      expect(contact_file).not_to be_valid 
+      expect(contact_file.errors[:csv_file]).to include("can't be blank")
+    end
+
     it "should validate that csv_file is not empty" do 
       file = 'spec/csv_files/empty_contacts.csv'
       csv_file = ActiveStorage::Blob.create_and_upload!(
@@ -29,11 +45,6 @@ RSpec.describe ContactFile, type: :model do
       contact_file = build :contact_file, csv_file: csv_file, headers: []
       
       expect(contact_file).not_to be_valid
-    end
-
-    it "should validate presence of attributes" do 
-      contact_file = build :contact_file
-      expect(contact_file).not_to be_valid 
       expect(contact_file.errors[:csv_file]).to include("can't be blank")
     end
 
@@ -54,9 +65,8 @@ RSpec.describe ContactFile, type: :model do
         content_type: 'text/csv'
       )
       let(:contact_file) {create :contact_file, csv_file: csv_file, user: user}
-      map_headers = {name: "full_name", birth_date: "date_of birth", phone: "cellphone", address: " address", card_number: "credit_card_number", email: "email_address"}
 
-      subject{contact_file.import(map_headers)}
+      subject{contact_file.import}
 
       describe "if three valid contacts" do 
         it "should create 3 contacts from csv" do
@@ -96,8 +106,7 @@ RSpec.describe ContactFile, type: :model do
         content_type: 'text/csv'
       )
       let(:contact_file) {create :contact_file, csv_file: csv_file, user: user}
-      map_headers = {name: "full_name", birth_date: "date_of birth", phone: "cellphone", address: " address", card_number: "credit_card_number", email: "email_address"}
-      subject{contact_file.import(map_headers)}
+      subject{contact_file.import}
 
       it "should create three failed contacts" do 
         expect{subject}.to change{FailedContact.count}.by(3)
