@@ -5,20 +5,23 @@ application up and running.
 
 Things you may want to cover:
 
-* Ruby version
+To run this project you'll need to have:
+* Ruby-3.0.1
+* Rails-6.1.3.1
+* Redis-6.2.1
+* PostgreSQL13
 
-* System dependencies
+Steps:
+  Change database settings on config/database.yml
 
-* Configuration
+  Open a terminal and run:
+  * redis-server
 
-* Database creation
+  Open another terminal located on project folder and run:
+  * bundle install
+  * bundle exec sidekiq
 
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+  Open the last terminal and run:
+  * rails db:create
+  * rails db:migrate
+  * rails s
