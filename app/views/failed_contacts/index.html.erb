@@ -26,7 +26,7 @@
         <td><%= contact.birth_date %></td>
         <td><%= contact.card_number %></td>
         <td><%= "#{time_ago_in_words(contact.created_at)} ago" %></td>
-        <td><%= link_to "View", contact %> </td>
+        <td><%= link_to "View", contact, class: "btn btn-sm btn-info" %> </td>
       </tr>
     <% end %>
   </tbody>

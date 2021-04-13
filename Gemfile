@@ -51,7 +51,7 @@ group :development do
   gem 'spring'
 end
 
-group :production do 
+group :production, :development do 
   gem "aws-sdk-s3", require: false
 end
 

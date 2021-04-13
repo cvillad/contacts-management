@@ -26,7 +26,7 @@ RSpec.describe ContactFile, type: :model do
         filename: 'valid_contacts.csv',
         content_type: 'text/csv'
       ).signed_id
-      contact_file = build :contact_file, csv_file: csv_file
+      contact_file = build :contact_file, csv_file: csv_file, headers: []
       
       expect(contact_file).not_to be_valid
     end
@@ -59,7 +59,7 @@ RSpec.describe ContactFile, type: :model do
       subject{contact_file.import(map_headers)}
 
       describe "if three valid contacts" do 
-        it "should create 3 contacts from csv" do 
+        it "should create 3 contacts from csv" do
           expect{subject}.to change{Contact.count}.by(3)
         end
 

@@ -4,6 +4,7 @@ class ContactFilesController < ApplicationController
 
   def index 
     @contact_files = current_user.contact_files.order(created_at: :desc).paginate(page: params[:page], per_page: 10)
+    @contact_file = current_user.contact_files.build
   end
 
   def match_headers
@@ -14,14 +15,6 @@ class ContactFilesController < ApplicationController
     ContactsImportWorker.perform_async(@contact_file.id, mapped_headers)
     flash[:notice] = "Importing records from csv file..."
     redirect_to contact_files_path
-    # @contact_file.import(mapped_headers)
-    # flash[:notice] = "Importing records from csv file..."
-    # if @contact_file.success_contacts_count == 0 && !@contact_file.waiting?
-    #   @contact_file.failed!
-    # else
-    #   @contact_file.finished!
-    # end
-    # redirect_to contact_files_path
   end
 
   def create
@@ -31,16 +24,13 @@ class ContactFilesController < ApplicationController
       @contact_file = contact_files_manager.contact_file
       if @contact_file.save
         flash[:notice] = "File uploaded successfully"
-        redirect_to contact_files_path
       else
-        byebug
         flash[:alert] = "There was a problem with your file"
-        redirect_to contacts_path
       end
     else
       flash[:alert] = "No file provided"
-      redirect_to contacts_path
     end
+    redirect_to contact_files_path
   end
 
   def destroy

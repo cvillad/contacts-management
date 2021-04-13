@@ -1,22 +1,24 @@
 class ContactFile < ApplicationRecord
   belongs_to :user
+
   enum status: {waiting: 0, processing: 1, failed: 2, finished: 3}
   attr_accessor :failed_contacts_count, :success_contacts_count
 
   has_one_attached :csv_file, dependent: :destroy
   has_many :failed_contacts
 
+  validates :headers, presence: {message: "CSV file can't be blank"}
   validates :csv_file, attached: true, content_type: ["text/csv"]
-  validate :validate_empty_file
 
   def path 
-    Rails.env.test? ? ActiveStorage::Blob.service.send(:path_for, csv_file.key) : csv_file.blob.url
+    Rails.env.test? ? ActiveStorage::Blob.service.send(:path_for, csv_file.key) : csv_file.url
   end
 
   def import(map_headers)
     success = false
     map_headers.symbolize_keys!
-    CSV.foreach(path, headers: true) do |row|
+    table = CSV.parse(csv_file.download, headers:  true)
+    table.each do |row|
       self.processing!
       contact = user.contacts.build(
         email: row[map_headers[:email]],
@@ -42,14 +44,4 @@ class ContactFile < ApplicationRecord
     end
     success ? self.finished! : self.failed!
   end
-
-  private
-  def validate_empty_file
-    self.errors.add(:csv_file, :blank) if csv_file.present? && csv_headers.empty? 
-  end
-
-  def csv_headers
-    CSV.open(path, headers: true).read.headers
-  end
-  
 end

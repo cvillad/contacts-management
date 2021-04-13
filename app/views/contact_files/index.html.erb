@@ -18,9 +18,14 @@
         <td><%= file.headers %></td>
         <td><%= "#{time_ago_in_words(file.created_at)} ago" %></td>
         <td><%= file.status %></td>
-        <td><%= link_to 'Import', contact_file_import_path(file) unless file.finished? %></td>
-        <td><%= link_to 'Destroy', file, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to 'Import', contact_file_import_path(file), class: "btn btn-sm btn-success" unless file.finished? %></td>
+        <td><%= link_to 'Destroy', file, class: "btn btn-sm btn-danger", method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
   </tbody>
 </table>
+<br/>
+<%= form_with model: @contact_file do |f| %>
+  <%= f.file_field :file %>
+  <%= f.submit "Upload", class: "btn btn-success" %>
+<% end %>

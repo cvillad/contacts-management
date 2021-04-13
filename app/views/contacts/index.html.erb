@@ -22,15 +22,11 @@
         <td><%= contact.address %></td>
         <td><%= contact.format_birth_date %></td>
         <td><%= "#{contact.card_franchise} #{"*"*8}#{contact.card_last_four_digits}" %></td>
-        <td><%= link_to 'Destroy', contact, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to 'Destroy', contact, class: "btn btn-sm btn-danger", method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
   </tbody>
 </table>
 
 <br>
-<%= link_to 'Export CSV', contacts_path(format: :csv) %>
-<%= form_with model: @contact_file do |f| %>
-  <%= f.file_field :file %>
-  <%= f.submit "Upload" %>
-<% end %>
+<%= link_to 'Export CSV', contacts_path(format: :csv), class: "btn btn-success" %>

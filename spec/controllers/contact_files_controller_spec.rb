@@ -62,11 +62,11 @@ RSpec.describe ContactFilesController, type: :controller do
 
       context "when no file provided" do 
         subject {post :create, params: {}}
-        it "should redirect to contacts_path" do 
+        it "should redirect to contact_files_path" do 
           subject
           expect(response).to have_http_status(:found)
           expect(flash[:alert]).to eq("No file provided")
-          expect(response).to redirect_to "http://test.host/contacts"
+          expect(response).to redirect_to "http://test.host/contact_files"
         end
       end
     end
@@ -106,7 +106,7 @@ RSpec.describe ContactFilesController, type: :controller do
         let(:contact_file) {create :contact_file, csv_file: csv_file, user: user}
         subject{post :import, params: { id: contact_file, name: "full_name", birth_date: "date_of birth", phone: "cellphone", address: " address", card_number: "credit_card_number", email: "email_address" }}
 
-        it "should redirect_to contacts_path" do 
+        it "should redirect_to contact_files_path" do 
           subject 
           expect(response).to have_http_status(:found)
           expect(flash[:notice]).to eq("Importing records from csv file...")
@@ -124,7 +124,7 @@ RSpec.describe ContactFilesController, type: :controller do
         let(:contact_file) {create :contact_file, csv_file: csv_file, user: user}
         subject{post :import, params: { id: contact_file, name: "full_name", birth_date: "date_of birth", phone: "cellphone", address: " address", card_number: "credit_card_number", email: "email_address" }}
 
-        it "should redirect_to contacts_path" do 
+        it "should redirect_to contact_files_path" do 
           subject 
           expect(response).to have_http_status(:found)
           expect(flash[:notice]).to eq("Importing records from csv file...")
