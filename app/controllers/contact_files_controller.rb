@@ -4,15 +4,14 @@ class ContactFilesController < ApplicationController
 
   def index 
     @contact_files = current_user.contact_files.order(created_at: :desc).paginate(page: params[:page], per_page: 10)
+  end
+
+  def new 
     @contact_file = current_user.contact_files.build
   end
 
-  def match_headers
-    @headers = @contact_file.headers
-  end
-
   def import
-    ContactsImportWorker.perform_async(@contact_file.id, mapped_headers)
+    ContactsImportWorker.perform_async(@contact_file.id)
     flash[:notice] = "Importing records from csv file..."
     redirect_to contact_files_path
   end
@@ -20,7 +19,7 @@ class ContactFilesController < ApplicationController
   def create
     if params[:contact_file].present?
       file = contact_file_params[:file]
-      contact_files_manager = ContactFilesManager.new(current_user, file)
+      contact_files_manager = ContactFilesManager.new(current_user, file, mapped_headers)
       @contact_file = contact_files_manager.contact_file
       if @contact_file.save
         flash[:notice] = "File uploaded successfully"

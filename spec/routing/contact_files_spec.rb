@@ -13,8 +13,8 @@ RSpec.describe "/contact_files routes" do
     expect(delete "contact_files/1").to route_to("contact_files#destroy", id: "1")
   end
 
-  it "routes to contact_file#match_headers" do 
-    expect(get "contact_file/import/1").to route_to("contact_files#match_headers", id: "1")
+  it "routes to contact_file#new" do 
+    expect(get "contact_files/new").to route_to("contact_files#new")
   end
 
   it "routes to contact_file#import" do 

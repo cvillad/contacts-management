@@ -7,12 +7,19 @@ class ContactFile < ApplicationRecord
   has_one_attached :csv_file, dependent: :destroy
   has_many :failed_contacts
 
-  validates :headers, presence: {message: "CSV file can't be blank"}
+  validates :name, presence: true 
+  validates :matched_headers, presence: true
+  validates :headers, presence: true
   validates :csv_file, attached: true, content_type: ["text/csv"]
+  validate :validate_empty_file
 
-  def import(map_headers)
+  def mapped_headers
+    (JSON.parse matched_headers.gsub("=>", ":")).symbolize_keys
+  end
+
+  def import
     success = false
-    map_headers.symbolize_keys!
+    map_headers = mapped_headers
     table = CSV.parse(csv_file.download, headers:  true)
     table.each do |row|
       contact = user.contacts.build(
@@ -38,5 +45,10 @@ class ContactFile < ApplicationRecord
       end
     end
     success ? self.finished! : self.failed!
+  end
+
+  private 
+  def validate_empty_file
+    errors.add(:csv_file, :blank) if headers.empty?
   end
 end
