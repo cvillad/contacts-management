@@ -3,7 +3,7 @@ class ContactFilesController < ApplicationController
   before_action :set_contact_file, only:[:import, :match_headers, :destroy]
 
   def index 
-    @contact_files = current_user.contact_files.order(created_at: :desc).paginate(page: params[:page], per_page: 10)
+    @contact_files = current_user.contact_files.includes(:csv_file_blob).order(created_at: :desc).paginate(page: params[:page], per_page: 10)
   end
 
   def new 
