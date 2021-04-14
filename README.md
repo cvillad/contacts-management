@@ -25,3 +25,5 @@ Steps:
   * rails db:create
   * rails db:migrate
   * rails s
+
+Test csv files are located in spec/csv_files
