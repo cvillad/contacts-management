@@ -31,6 +31,7 @@ gem 'sidekiq', '~> 6.1.3'
 gem 'bootsnap', '>= 1.4.4', require: false
 gem 'will_paginate', '~> 3.3.0'
 gem 'will_paginate-bootstrap4'
+gem 'credit_card_validations'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

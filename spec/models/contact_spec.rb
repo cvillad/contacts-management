@@ -21,7 +21,7 @@ RSpec.describe Contact, type: :model do
       contact.save
       expect(contact.card_franchise).to eq("Visa")
       another_contact = create :contact, card_number: "5105105105105100" #fake mastercard
-      expect(another_contact.card_franchise).to eq("Mastercard")
+      expect(another_contact.card_franchise).to eq("MasterCard")
     end
 
     it "has a proper last_four_digits" do 
