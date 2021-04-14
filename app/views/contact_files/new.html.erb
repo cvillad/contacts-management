@@ -1,4 +1,5 @@
-<h3>Upload file</h3>
+<h1>Upload file</h1>
+<p>After select the file match csv headers with database columns</p>
 <%= form_with model: @contact_file, url: contact_files_path, locale: true, html: {id: "contact-file-form"} do |f| %>
   <%= f.file_field :file, id: "file"  %>
 <% end %>
