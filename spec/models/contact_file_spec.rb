@@ -83,7 +83,6 @@ RSpec.describe ContactFile, type: :model do
     end
 
     context "when file with invalid contacts" do 
-      let(:user) { create :user }
       let(:csv_file) {CSVManager.load("spec/csv_files/invalid_contacts.csv") }
       let(:contact_file) {create :contact_file, csv_file: csv_file, user: user}
       subject{contact_file.import}
@@ -98,7 +97,23 @@ RSpec.describe ContactFile, type: :model do
       end
     end
 
-    context "when no headers provided" do 
+    context "when file with no contacts" do 
+      let(:csv_file) {CSVManager.load("spec/csv_files/no_contacts.csv") }
+      let(:contact_file) {create :contact_file, csv_file: csv_file, user: user}
+      subject{contact_file.import}
+
+      it "should not create failed contacts" do 
+        expect{subject}.to change{FailedContact.count}.by(0)
+      end
+
+      it "should not create contacts" do 
+        expect{subject}.to change{Contact.count}.by(0)
+      end
+
+      it "should set status of contact file to finished" do 
+        subject 
+        expect(contact_file.finished?).to eq(true)
+      end
     end
   end
 end
