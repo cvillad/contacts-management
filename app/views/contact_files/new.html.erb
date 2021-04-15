@@ -1,5 +1,10 @@
 <h1>Upload file</h1>
 <p>After select the file match csv headers with database columns</p>
 <%= form_with model: @contact_file, url: contact_files_path, locale: true, html: {id: "contact-file-form"} do |f| %>
-  <%= f.file_field :file, id: "file"  %>
+  <div class="custom-file mb-2">  
+    <%= f.file_field :file, id: "file", class: "custom-file-input"  %>
+    <label class="custom-file-label" for="file">Choose file</label>
+  </div>
+  <div id="inputs">
+  </div>
 <% end %>
