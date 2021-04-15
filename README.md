@@ -27,3 +27,8 @@ Steps:
   * rails s
 
 Test csv files are located in spec/csv_files
+
+Link to access heroku app: 
+  https://contacts-21.herokuapp.com/
+  email: jdoe@gmail.com
+  password: secret
