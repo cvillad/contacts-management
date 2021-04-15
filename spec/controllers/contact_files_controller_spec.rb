@@ -1,5 +1,6 @@
 require 'rails_helper'
 require_relative '../support/devise'
+require_relative '../support/csv_manager'
 
 RSpec.describe ContactFilesController, type: :controller do
   context "when user is not logged" do 
@@ -72,7 +73,7 @@ RSpec.describe ContactFilesController, type: :controller do
     end
 
     describe "#destroy" do 
-      csv_file = create_csv_file("spec/csv_files/valid_contacts.csv")
+      csv_file = CSVManager.load("spec/csv_files/valid_contacts.csv")
       let(:contact_file) {create :contact_file, csv_file: csv_file, user: user}
 
       subject{delete :destroy, params: { id: contact_file } }
@@ -88,7 +89,7 @@ RSpec.describe ContactFilesController, type: :controller do
 
     describe "#new" do 
       context "when valid file provided" do
-        csv_file = create_csv_file("spec/csv_files/valid_contacts.csv")
+        csv_file = CSVManager.load("spec/csv_files/valid_contacts.csv")
         let(:contact_file) {create :contact_file, csv_file: csv_file, user: user}
         
         subject{get :new }
@@ -102,7 +103,7 @@ RSpec.describe ContactFilesController, type: :controller do
 
     describe "#import" do 
       context "when file is valid" do
-        csv_file = create_csv_file("spec/csv_files/valid_contacts.csv")
+        csv_file = CSVManager.load("spec/csv_files/valid_contacts.csv")
         let(:contact_file) {create :contact_file, csv_file: csv_file, user: user}
         subject{post :import, params: { id: contact_file, name: "full_name", birth_date: "date_of birth", phone: "cellphone", address: " address", card_number: "credit_card_number", email: "email_address" }}
 
@@ -120,7 +121,7 @@ RSpec.describe ContactFilesController, type: :controller do
         # John Doe3,jdoe3@gmail.com,(+57) 322229-52-22,2012-12-12,4242424242424242,Calle lagartos 75  invalid phone
         # John Doe4,jdoe4gmail.com,(+57) 322-272-52-25,2012-12-12,424242424242422,Calle lagartos 75   invalid email, invalid card_number
         # John Doe5,jdoe5@gmail.com,(+57) 322-221-12-62,2012-12-12,4242424242424242,Calle lagartos 75
-        csv_file = create_csv_file("spec/csv_files/invalid_contacts.csv")
+        csv_file = CSVManager.load("spec/csv_files/invalid_contacts.csv")
         let(:contact_file) {create :contact_file, csv_file: csv_file, user: user}
         subject{post :import, params: { id: contact_file, name: "full_name", birth_date: "date_of birth", phone: "cellphone", address: " address", card_number: "credit_card_number", email: "email_address" }}
 

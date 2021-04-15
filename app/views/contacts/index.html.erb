@@ -23,7 +23,7 @@
         <td><%= contact.address %></td>
         <td><%= contact.format_birth_date %></td>
         <td><%= "#{contact.card_franchise} #{"*"*8}#{contact.card_last_four_digits}" %></td>
-        <td><%= time_ago_in_words(contact.created_at) %></td>
+        <td><%= "#{time_ago_in_words(contact.created_at)} ago" %></td>
         <td><%= link_to 'Destroy', contact, class: "btn btn-sm btn-danger", method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>

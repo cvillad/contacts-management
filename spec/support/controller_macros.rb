@@ -13,14 +13,7 @@ module ControllerMacros
   def sign_out(resource)
     logout(warden_scope(resource))
   end
-
-  def create_csv_file(file)
-    csv_file = ActiveStorage::Blob.create_and_upload!(
-        io: File.open(file, 'rb'),
-        filename: 'valid_contacts.csv',
-        content_type: 'text/csv'
-    ).signed_id
-  end
+  
   private
 
   def warden_scope(resource)

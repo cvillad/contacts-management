@@ -1,14 +1,9 @@
 require 'rails_helper'
+require_relative '../support/csv_manager'
 
 RSpec.describe ContactFile, type: :model do
   describe "#validations" do 
-    file = 'spec/csv_files/valid_contacts.csv'
-    csv_file = ActiveStorage::Blob.create_and_upload!(
-      io: File.open(file, 'rb'),
-      filename: 'valid_contacts.csv',
-      content_type: 'text/csv'
-    ).signed_id
-
+    let(:csv_file) {CSVManager.load('spec/csv_files/valid_contacts.csv') }
     let(:contact_file) {create :contact_file, csv_file: csv_file}
 
     it "validate factory" do 
@@ -36,12 +31,7 @@ RSpec.describe ContactFile, type: :model do
     end
 
     it "should validate that csv_file is not empty" do 
-      file = 'spec/csv_files/empty_contacts.csv'
-      csv_file = ActiveStorage::Blob.create_and_upload!(
-        io: File.open(file, 'rb'),
-        filename: 'valid_contacts.csv',
-        content_type: 'text/csv'
-      ).signed_id
+      csv_file = CSVManager.load('spec/csv_files/empty_contacts.csv')
       contact_file = build :contact_file, csv_file: csv_file, headers: []
       
       expect(contact_file).not_to be_valid
@@ -58,12 +48,7 @@ RSpec.describe ContactFile, type: :model do
   describe ".import" do 
     let(:user) {create :user}
     context "when valid contacts provided in csv" do 
-      file = Rails.root.join('spec', 'csv_files', 'valid_contacts.csv')
-      csv_file = ActiveStorage::Blob.create_and_upload!(
-        io: File.open(file, 'rb'),
-        filename: 'valid_contacts.csv',
-        content_type: 'text/csv'
-      )
+      let(:csv_file) { CSVManager.load("spec/csv_files/valid_contacts.csv") }
       let(:contact_file) {create :contact_file, csv_file: csv_file, user: user}
 
       subject{contact_file.import}
@@ -99,12 +84,7 @@ RSpec.describe ContactFile, type: :model do
 
     context "when file with invalid contacts" do 
       let(:user) { create :user }
-      file = Rails.root.join('spec', 'csv_files', 'invalid_contacts.csv')
-      csv_file = ActiveStorage::Blob.create_and_upload!(
-        io: File.open(file, 'rb'),
-        filename: 'invalid_contacts.csv',
-        content_type: 'text/csv'
-      )
+      let(:csv_file) {CSVManager.load("spec/csv_files/invalid_contacts.csv") }
       let(:contact_file) {create :contact_file, csv_file: csv_file, user: user}
       subject{contact_file.import}
 

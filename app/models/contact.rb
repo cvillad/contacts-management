@@ -43,7 +43,7 @@ class Contact < ApplicationRecord
   end
 
   def format_birth_date
-    self[:birth_date].strftime("%Y %B %d") if self[:birth_date]
+    birth_date.strftime("%Y %B %d") if self.birth_date
   end
 
 end
