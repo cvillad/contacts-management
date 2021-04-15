@@ -11,6 +11,7 @@ class ContactFilesController < ApplicationController
   end
 
   def import
+    @contact_file.processing!
     ContactsImportWorker.perform_async(@contact_file.id)
     flash[:notice] = "Importing records from csv file..."
     redirect_to contact_files_path
