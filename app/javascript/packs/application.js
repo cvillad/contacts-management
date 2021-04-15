@@ -39,7 +39,7 @@ $(document).on("turbolinks:load", function() {
   function append_select(form, label, number, options){
     const o1 = options[1]==null ?  options[0] : options[1]
     const o2 = options[2]==null ?  options[0] : options[2]
-    const o3 = options[3]==null ?  options[0] : options[4]
+    const o3 = options[3]==null ?  options[0] : options[3]
     const o4 = options[4]==null ?  options[0] : options[4]
     const o5 = options[5]==null ?  options[0] : options[5]
     form.append(`<div class="form-group">

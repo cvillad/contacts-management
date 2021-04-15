@@ -18,7 +18,7 @@ class ContactFile < ApplicationRecord
   end
 
   def import
-    success = false
+    success, failed = 0, 0
     map_headers = mapped_headers
     table = CSV.parse(csv_file.download, headers:  true)
     table.each do |row|
@@ -31,7 +31,7 @@ class ContactFile < ApplicationRecord
         card_number: row[map_headers[:card_number]]
       )
       if contact.save
-        success = true
+        success+=1
       else
         user.failed_contacts.create(
           email: row[map_headers[:email]],
@@ -42,9 +42,10 @@ class ContactFile < ApplicationRecord
           card_number: row[map_headers[:card_number]],
           error_details: contact.errors.full_messages
         )
+        failed+=1
       end
     end
-    success ? self.finished! : self.failed!
+    success > 0 || (success==0 && failed==0)  ? self.finished! : self.failed!
   end
 
   private 
