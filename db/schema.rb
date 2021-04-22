@@ -47,7 +47,7 @@ ActiveRecord::Schema.define(version: 2021_04_13_185529) do
     t.string "name"
     t.text "headers", array: true
     t.bigint "user_id", null: false
-    t.integer "status", default: 0, null: false
+    t.integer "status", default: 0
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.text "matched_headers"
@@ -66,7 +66,6 @@ ActiveRecord::Schema.define(version: 2021_04_13_185529) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "card_last_four_digits"
-    t.index ["email"], name: "index_contacts_on_email", unique: true
     t.index ["user_id"], name: "index_contacts_on_user_id"
   end
 

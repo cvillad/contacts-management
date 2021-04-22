@@ -10,7 +10,7 @@ class Contact < ApplicationRecord
   }
   belongs_to :user
   validates :name, presence: true, format: {with: /\A[a-zA-Z0-9 -]*\z/, multiline: true}
-  validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
+  validates :email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :address, presence: true
   validates :phone, presence: true, format: {with: /\A\(\+\d{2}\) \d{3}([- ])\d{3}\1\d{2}\1\d{2}\z/}
   validates :birth_date, presence: true

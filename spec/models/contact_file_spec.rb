@@ -63,23 +63,6 @@ RSpec.describe ContactFile, type: :model do
           expect(contact_file.finished?).to eq(true)
         end
       end
-
-      describe "if two valid contacts contact and one invalid" do 
-        let(:contact){create :contact, name: "John Doe3", email: "jdoe3@gmail.com", phone: "(+57) 322-229-52-22", card_number: "4242424242424242", birth_date: "2012-12-12", address: "Calle lagartos 75"}
-        before{contact}
-        it "should create two contacts" do 
-          expect{subject}.to change{Contact.count}.by(2)
-        end
-
-        it "should create one failed_contact" do 
-          expect{subject}.to change{FailedContact.count}.by(1)
-        end
-
-        it "should set status of contact file to finished" do 
-          subject 
-          expect(contact_file.finished?).to eq(true)
-        end
-      end
     end
 
     context "when file with invalid contacts" do 

@@ -80,14 +80,6 @@ RSpec.describe Contact, type: :model do
       contact.email = "example@example.com"
       expect(contact).to be_valid
     end
-
-    it "validates uniqueness of email" do 
-      contact = create :contact
-      other_contact = build :contact, email: contact.email
-      expect(other_contact).not_to be_valid
-      other_contact.email = "other@example.com"
-      expect(other_contact).to be_valid
-    end
   end
 
   describe ".format_birth_date" do 

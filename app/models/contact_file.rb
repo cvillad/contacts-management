@@ -1,8 +1,6 @@
 class ContactFile < ApplicationRecord
   belongs_to :user
-
   enum status: {waiting: 0, processing: 1, failed: 2, finished: 3}
-  attr_accessor :failed_contacts_count, :success_contacts_count
 
   has_one_attached :csv_file, dependent: :destroy
   has_many :failed_contacts
@@ -45,7 +43,7 @@ class ContactFile < ApplicationRecord
         failed+=1
       end
     end
-    success > 0 || (success==0 && failed==0)  ? self.finished! : self.failed!
+    success > 0 || (success==0 && failed==0) ? self.finished! : self.failed!
   end
 
   private 
